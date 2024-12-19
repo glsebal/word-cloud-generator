@@ -48,9 +48,12 @@
         }
 
         function generateWordCloud(wordCounts) {
-            const wordArray = Object.entries(wordCounts).map(([word, count]) => [word, count]);
+            // Convertir el objeto en una matriz y ordenar por frecuencia
+            const wordArray = Object.entries(wordCounts).sort((a, b) => b[1] - a[1]);
+            // Tomar las primeras 30 palabras más frecuentes
+            const topWords = wordArray.slice(0, 30);
             WordCloud(document.getElementById('wordCloud'), {
-                list: wordArray,
+                list: topWords,
                 click: function(item) {
                     const wordToRemove = item[0];
                     delete wordCounts[wordToRemove];
