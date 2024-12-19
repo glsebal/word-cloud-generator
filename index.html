@@ -39,7 +39,7 @@
         });
 
         function processText(text) {
-            const words = text.toLowerCase().match(/\b\w+\b/g); // Tokeniza el texto
+            const words = text.toLowerCase().match(/\b[a-záéíóúüñ]+\b/g); // Tokeniza el texto excluyendo números
             const wordCounts = {};
             words.forEach(word => {
                 wordCounts[word] = (wordCounts[word] || 0) + 1;
@@ -60,7 +60,9 @@
                     generateWordCloud(wordCounts); // Regenera la nube sin la palabra
                 },
                 gridSize: 10,
-                weightFactor: 10,
+                weightFactor: function (size) {
+                    return Math.log(size + 1) * 10; // Ajustar el tamaño de las palabras
+                },
                 fontFamily: 'Arial',
                 color: 'random-dark',
                 backgroundColor: '#f0f0f0'
