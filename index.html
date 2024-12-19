@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Nube de Palabras</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.0.6/wordcloud2.min.js"></script>
+    <script src="https://unpkg.com/compromise@13.11.0/builds/compromise.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,7 +45,23 @@
             words.forEach(word => {
                 wordCounts[word] = (wordCounts[word] || 0) + 1;
             });
-            generateWordCloud(wordCounts);
+            filterWordsByCategory(wordCounts);
+        }
+
+        function filterWordsByCategory(wordCounts) {
+            const filteredWordCounts = {};
+            const nlp = window.nlp;
+
+            Object.keys(wordCounts).forEach(word => {
+                const doc = nlp(word);
+                const tags = doc.out('tags')[0];
+
+                if (tags.Noun || tags.Adjective || tags.Verb) {
+                    filteredWordCounts[word] = wordCounts[word];
+                }
+            });
+
+            generateWordCloud(filteredWordCounts);
         }
 
         function generateWordCloud(wordCounts) {
