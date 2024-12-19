@@ -54,9 +54,9 @@
 
             Object.keys(wordCounts).forEach(word => {
                 const doc = nlp(word);
-                const tags = doc.out('tags')[0];
+                const tags = doc.tags()[0];
 
-                if (tags && (tags.Noun || tags.Adjective || tags.Verb)) {
+                if (tags && (tags.includes('Noun') || tags.includes('Adjective') || tags.includes('Verb'))) {
                     filteredWordCounts[word] = wordCounts[word];
                 }
             });
@@ -76,9 +76,9 @@
                     delete wordCounts[wordToRemove];
                     generateWordCloud(wordCounts); // Regenera la nube sin la palabra
                 },
-                gridSize: 10,
+                gridSize: 8,
                 weightFactor: function (size) {
-                    return size * 2; // Ajustar el tamaño de las palabras
+                    return Math.log(size + 1) * 5; // Ajustar el tamaño de las palabras
                 },
                 fontFamily: 'Arial',
                 color: 'random-dark',
