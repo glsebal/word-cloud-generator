@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Nube de Palabras</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.0.6/wordcloud2.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #wordCloud {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generador de Nube de Palabras</h1>
+    <p>Sube un archivo .txt para generar una nube de palabras interactiva.</p>
+    <input type="file" id="fileInput" accept=".txt">
+
+    <div id="wordCloud"></div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    processText(text);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function processText(text) {
+            const words = text.toLowerCase().match(/\b\w+\b/g); // Tokeniza el texto
+            const wordCounts = {};
+            words.forEach(word => {
+                wordCounts[word] = (wordCounts[word] || 0) + 1;
+            });
+            generateWordCloud(wordCounts);
+        }
+
+        function generateWordCloud(wordCounts) {
+            const wordArray = Object.entries(wordCounts).map(([word, count]) => [word, count]);
+            WordCloud(document.getElementById('wordCloud'), {
+                list: wordArray,
+                click: function(item) {
+                    const wordToRemove = item[0];
+                    delete wordCounts[wordToRemove];
+                    generateWordCloud(wordCounts); // Regenera la nube sin la palabra
+                },
+                gridSize: 10,
+                weightFactor: 10,
+                fontFamily: 'Arial',
+                color: 'random-dark',
+                backgroundColor: '#f0f0f0'
+            });
+        }
+    </script>
+</body>
+</html>
